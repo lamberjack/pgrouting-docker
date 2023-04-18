@@ -3,32 +3,39 @@ version: '3.6'
 services:
 
   postgis:
-    image: pgrouting/pgrouting:13-3.1-3.1.3
+    build: .
+    image: pgrouting/osm2:1.0.0
     container_name: postgis_local
-    env_file: .env
     volumes:
       - pgis-data:/var/lib/postgresql/data
+      # copy the script to initialize the tables
       - ./sql-scripts/init-db.sql:/docker-entrypoint-initdb.d/1-init-db.sql
+      # populate the table
       - ./sql-scripts/insert-rows.sql:/docker-entrypoint-initdb.d/2-insert-rows.sql
+      # configure graph topology
       - ./sql-scripts/create-topology.sql:/docker-entrypoint-initdb.d/3-create-topology.sql
+      # copy the osm data
+      - ./osm-data/map.osm:/usr/share/map.osm
+      # copy the osm style configuration
+      - ./osm-data/custom.style:/usr/share/osm2pgsql/custom.style
+
     environment:
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gis
     ports:
       - '5433:5432'
 
   pgadmin:
     image: dpage/pgadmin4:6.21
     container_name: pgadmin4_local
-    env_file: .env
     restart: always
     depends_on:
       - postgis
     ports:
       - "5051:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: $PGADMIN_EMAIL
-      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_PASSWORD
+      PGADMIN_DEFAULT_EMAIL: user@email.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
       - pgadmin-data:/var/lib/pgadmin
   

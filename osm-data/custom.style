@@ -1,0 +1,21 @@
+
+# OsmType  Tag          DataType     Flags
+node,way   access       text         linear
+node,way   barrier      text         linear
+node,way   highway      text         linear
+node,way   junction     text         linear
+node,way   motorcar     text         linear
+node,way   route        text         linear
+node,way   toll         text         linear
+node,way   tunnel       text         linear
+node,way   z_order      int4         linear # This is calculated during import
+
+# Area tags
+# We don't make columns for these tags, but objects with them are areas.
+# Mainly for use with hstore
+node,way    accuracy:meters         text    delete
+
+# KSJ2 (JA)
+# See also note:ja and source_ref above
+node,way    KSJ2:*                  text    delete
+# Yahoo/ALPS (JA)
