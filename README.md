@@ -1,4 +1,4 @@
-## PostGIS Database with pgAdmin ##
+## PostGIS Database with pgRouting extension and pgAdmin client ##
 
 This stack starts 2 container:
 
