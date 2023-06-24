@@ -38,18 +38,18 @@ CREATE TABLE road_analysis
 
 
 -- insert from_node to_node and dijksta total cost of the path 
-insert into road_analysis (from_node, to_node, length)
-SELECT distinct <node-origin>, <node-destination>, agg_cost FROM pgr_dijkstra(
+INSERT into road_analysis (from_node, to_node, length)
+SELECT distinct <origin-node>, <destination-node>, agg_cost FROM pgr_dijkstra(
   'SELECT osm_id as id, source, target, length as cost FROM planet_osm_roads',
-    <node-origin>, <node-destination>
+    <origin-node>, <destination-node>
 ) where edge = -1;
 
 
 -- dijkstra path calculation for roads 
-update road_analysis r 
-set (the_geom) = (select st_makeline(pgr.way)
+UPDATE road_analysis r 
+set (the_geom) = (SELECT st_makeline(pgr.way)
 from (SELECT w.way  FROM pgr_dijkstra(
   'SELECT osm_id as id, source, target, length as cost FROM planet_osm_roads',
-    <node-origin>, <node-destination>
+    <origin-node>, <destination-node>
 ) as d left join planet_osm_roads as w on d.edge = w.osm_id) as pgr)
-where r.from_node = <node-origin> and r.to_node = <node-destination>;
+where r.from_node = <origin-node> and r.to_node = <destination-node>;
